@@ -49,13 +49,17 @@ where manager_id is not null;
 -- EMPLOYEE_ID 사번, JOB_TITLE 직책임
 -- *******************
 
-select * from employees;
-select jh.EMPLOYEE_ID 사번, j.JOB_TITLE 직책,
-    trunc(jh.END_DATE-jh.START_DATE) 근속기간
-from job_history jh
-    inner join jobs j
-        on jh.JOB_ID=j.JOB_ID
-where jh.EMPLOYEE_ID like '201';
+select h.EMPLOYEE_ID 사번, j.JOB_TITLE 직책, e.fname 이름,
+    trunc(h.END_DATE-h.START_DATE) 근속기간
+from his h
+    join job j
+        on h.JOB_ID = j.JOB_ID
+    join emp e
+        on h.EID = e.EID
+where e.DID like (select d.did
+                    from dep d
+                    where d.DNAME like 'Marketing'
+                    );
 
 -- *******************
 -- [문제024]
@@ -63,7 +67,16 @@ where jh.EMPLOYEE_ID like '201';
 -- DEPARTMENT_NAME 부서명, 이름(FIRST_NAME + [공백] + LAST_NAME)까지 출력
 -- 이름은 중복되어서 출력됨. 즉 한명이 여러부서에서 업무를 수행함
 -- ******************* 
-
+SELECT 
+    DNAME 부서명, FNAME || ' ' || LNAME 이름
+FROM EMP E 
+    JOIN JOB J
+        ON E.JID LIKE J.JID
+    JOIN DEP D
+        ON E.DID LIKE D.DID
+WHERE J.JID LIKE (SELECT JID 
+                  FROM JOB 
+                  WHERE TITLE LIKE 'Programmer');
 -- *******************
 -- [문제025]
 -- 부서명, 관리자 이름, 부서위치 도시 표시
@@ -81,7 +94,7 @@ from dep d
     order by dname;
 
 -- *******************
--- [문제025]
+-- [문제026]
 -- 부서별 평균 급여를 구하시오
 -- *******************    
 select 
@@ -90,6 +103,65 @@ select
 from emp e
     join dep d
         on d.DID like e.DID
+    group by e.DID, d.DNAME;
+    
+-- *******************
+-- [문제027]
+-- 부서별 평균 급여가 10000 이 넘는
+--  부서명, "부서별 평균 급여" 를 출력하시오
+-- *******************  
+select 
+    d.DNAME 부서명,
+    round(avg(e.SAL),2) "부서별 평균 급여"
+from emp e
+    join dep d
+        on d.DID like e.DID
     group by e.DID, d.DNAME
-    having round(avg(e.SAL),2) >= 10000
-    ;
+    having round(avg(e.SAL),2) >= 10000;
+
+-- *******************
+-- [문제028]
+-- 올해 연봉에서 10% 인상된 급액이 내년 연봉으로
+-- 책정되었습니다. 내년 전사원의 내년급여를
+-- 출력하세요.
+-- 단, 연봉 = 급여 * 12 입니다
+-- *********************
+select e.EID 사번, e.FNAME 이름, e.SAL 올해급여, ((e.SAL*12)*1.1)/12 내년급여 
+from emp e;
+
+-- *******************
+-- [문제029]
+-- 부서별로 담당하는 관리자와 업무를 
+-- 한번씩만 출력하시오 (20행)
+-- *********************
+select * from departments;
+select * from employees;
+select * from jobs;
+select d.department_name 부서, e.first_name 관리자,job_title 업무
+from employees e
+    join departments d
+    on d.MANAGER_ID like e.EMPLOYEE_ID
+    join jobs j
+    on j.JOB_ID = e.JOB_ID
+order by d.department_name;
+
+-- *******************
+-- [문제030]
+-- 이번 분기에 IT부서(부서명: IT)에서는 신규 프로그램을 개발하고 
+-- 보급하여 회사에 공헌하였다. 
+-- 이에 해당 부서의 사원 급여를 12.3% 인상하여 지급합니다.
+-- 정수만(반올림) 표시하여 보고서를 작성하시오. 
+-- 보고서는 사원번호, 성과 이름(Name 으로 별칭), 
+-- 급여, 인상된 급여(Increased Salary 로 별칭)순으로 출력하시오
+-- 급액은 천원단위임
+-- *********************
+select * from jobs;
+select e.EMPLOYEE_ID 사번,
+        e.FIRST_NAME ||' '|| e.LAST_NAME 이름,
+         To_char ( e.SALARY*1.123 , 'L999,999,999,990' ) "인상된 급여"
+from employees e
+where e.DEPARTMENT_ID like(
+    select d.DID
+    from dep d
+    where d.DNAME like 'IT'
+);
