@@ -155,7 +155,7 @@ order by d.department_name;
 -- 급여, 인상된 급여(Increased Salary 로 별칭)순으로 출력하시오
 -- 급액은 천원단위임
 -- *********************
-select * from jobs;
+select * from dep;
 select e.EMPLOYEE_ID 사번,
         e.FIRST_NAME ||' '|| e.LAST_NAME 이름,
          To_char ( e.SALARY*1.123 , 'L999,999,999,990' ) "인상된 급여"
@@ -165,3 +165,7 @@ where e.DEPARTMENT_ID like(
     from dep d
     where d.DNAME like 'IT'
 );
+
+select d.DID
+    from dep d
+where d.DNAME like 'IT';
