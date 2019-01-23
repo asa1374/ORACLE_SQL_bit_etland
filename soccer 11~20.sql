@@ -105,7 +105,9 @@ from (select p.TEAM_ID,round(avg(p.HEIGHT),2) 평균키
         from player p
         where p.HEIGHT < (select round(avg(p.HEIGHT),2)
                             from player p
-                            where (p.TEAM_ID like 'K04'))
+                                join team t
+                                    on t.TEAM_ID = p.TEAM_ID
+                            where t.TEAM_NAME like '유나이티드')
         group by p.TEAM_ID) p
         join team t
             on t.team_id like p.TEAM_ID
@@ -122,3 +124,55 @@ where p.HEIGHT > (select round(avg(p.HEIGHT),2)
                     from player p
                     where (p.TEAM_ID like 'K04'))
 group by p.TEAM_ID;
+
+-- SOCCER_SQL_017
+-- 포지션이 MF 인 선수들의  소속팀명 및 선수명, 백넘버 출력
+
+select t.TEAM_NAME 팀명, p.PLAYER_NAME 선수명, p.BACK_NO 등번호
+from (select p.PLAYER_NAME,p.BACK_NO,p.TEAM_ID
+        from player p
+        where p.POSITION like 'MF'
+        order by p.PLAYER_NAME) p
+    join team t
+        on t.TEAM_ID like p.TEAM_ID;
+
+-- SOCCER_SQL_018
+-- 가장 키큰 선수 5 추출, 오라클, 단 키 값이 없으면 제외
+
+select p.PLAYER_NAME 선수명,p.BACK_NO 등번호,p.POSITION 포지션,p.HEIGHT 키
+from (select p.PLAYER_NAME,p.BACK_NO,p.POSITION,p.HEIGHT
+        from player p
+        order by p.HEIGHT desc) p
+where p.HEIGHT is not null and rownum <= 5;
+
+-- SOCCER_SQL_019
+-- 선수 자신이 속한 팀의 평균키보다 작은 선수 정보 출력
+
+select round(avg(HEIGHT),2)
+from player
+group by TEAM_ID
+order by team_id;
+-- 정답
+select (select t.TEAM_NAME
+        from team t
+        where t.TEAM_ID like p.team_id) 팀명,p.PLAYER_NAME 선수명,p.POSITION 포지션,p.HEIGHT 키
+from player p
+    join (select team_id,round(avg(HEIGHT),2) hi
+            from player
+            group by TEAM_ID) t
+        on p.team_id like t.team_id
+where p.HEIGHT < t.HI
+order by p.PLAYER_NAME;
+
+-- SOCCER_SQL_020
+-- 2012년 5월 한달간 경기가 있는 경기장 조회
+-- EXISTS 쿼리는 항상 연관쿼리로 상요한다.
+-- 또한 아무리 조건을 만족하는 건이 여러 건이라도
+-- 조건을 만족하는 1건만 찾으면 추가적인 검색을 진행하지 않는다.p
+
+select s.STADIUM_ID ID,s.STADIUM_NAME
+from stadium s
+where exists(select 1
+        from schedule sch
+        where s.STADIUM_ID like sch.STADIUM_ID and sch.SCHE_DATE like '201205%')
+order by s.STADIUM_NAME;
