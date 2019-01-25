@@ -98,3 +98,4 @@ select * from Oder_Details;
 select * from suppliers;
 select * from products;
 select * from categories;
+
