@@ -10,10 +10,14 @@ from customers c
 order by 순위 desc;
 
 --3. 페이지사이즈(5) 만큼만 출력한다.
-select c.* 
+select rownum rnum, t.* 
 from (select rownum 순위, c.*
         from customers c
-        order by 순위 desc) c
-where c."순위" between 26 and 30;
+        order by 순위 desc) t;
 
-select count(*) count from customers;
+select * 
+from (select rownum rrnum, t.* 
+    from (select rownum rnum, c.*
+        from customers c
+        order by rnum desc) t)
+where rrnum between 1 and 5;
