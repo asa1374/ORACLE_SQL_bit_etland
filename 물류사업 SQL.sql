@@ -7,6 +7,10 @@ SELECT *
 FROM EMPLOYEES 
 WHERE EMPLOYEE_ID LIKE 1000 and name like '±è°æ¹Î';
 
+select customer_name, phone
+from customers
+;
+
 select * from customers;
 select * from employees;
 select * from shippers;
@@ -21,4 +25,8 @@ delete from customers where customer_id like '%';
 desc customers;
 alter table customers modify(city varchar2(60));
 
+update customers
+set password = ?, phone = ?,address = ?,city = ?,postal_code = ?
+where customer_id  like ?;
 
+select * from image;

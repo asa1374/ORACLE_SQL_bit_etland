@@ -6,15 +6,27 @@ drop table orders;
 drop table shippers;
 drop table employees;
 drop table customers;
+drop table image;
 
 drop sequence employee_id;
 drop sequence order_id;
 drop sequence category_id;
 drop sequence product_id;
 drop sequence order_detail_id;
+drop sequence img_seq;
 
 
 select * from tab;
+
+CREATE TABLE Image(
+img_seq number primary key,
+imgName varchar2(20),
+imgExtention varchar2(20),
+owner varchar2(20)
+);
+CREATE SEQUENCE img_seq
+START WITH 1000
+INCREMENT BY 1;
 
 CREATE TABLE Customers(
 customer_id VARCHAR2(15) PRIMARY KEY,
@@ -25,7 +37,8 @@ address VARCHAR2(75) NOT NULL,
 city VARCHAR2(60) NOT NULL,
 postal_code VARCHAR2(15) NOT NULL,
 ssn VARCHAR2(15) NOT NULL,
-photo varchar2(30) default 'default_photo'
+photo varchar2(30) default 'default_photo',
+CONSTRAINT customers_fk_image FOREIGN KEY(photo) REFERENCES Image(img_seq)
 );
 CREATE SEQUENCE employee_id
 START WITH 1000
@@ -47,8 +60,6 @@ phone VARCHAR2(15)
 CREATE SEQUENCE order_id
 START WITH 1
 INCREMENT BY 1;
-
-
 
 CREATE TABLE Orders(
 order_id NUMBER PRIMARY KEY,
@@ -116,6 +127,8 @@ CONSTRAINT Oder_Details_fk_Products FOREIGN KEY(product_id)
     REFERENCES Products(product_id),
 quantity NUMBER DEFAULT 0
 );
+
+
 
 --Customers Å×ÀÌºí data------------------------------------------------------------------------------------
 insert into customers(customer_id,customer_name,password,city,address,postal_code,ssn,phone)
