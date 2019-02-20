@@ -37,9 +37,8 @@ address VARCHAR2(75) NOT NULL,
 city VARCHAR2(60) NOT NULL,
 postal_code VARCHAR2(15) NOT NULL,
 ssn VARCHAR2(15) NOT NULL,
-photo varchar2(30) default 'default_photo',
-CONSTRAINT customers_fk_image FOREIGN KEY(photo) REFERENCES Image(img_seq)
-);
+photo varchar2(30) default '1000');
+
 CREATE SEQUENCE employee_id
 START WITH 1000
 INCREMENT BY 1;
@@ -128,6 +127,9 @@ CONSTRAINT Oder_Details_fk_Products FOREIGN KEY(product_id)
 quantity NUMBER DEFAULT 0
 );
 
+
+insert into image(IMG_SEQ,IMGNAME,IMGEXTENTION,OWNER)
+values(IMG_SEQ.NEXTVAL,'default_img','png','default');
 
 
 --Customers Å×ÀÌºí data------------------------------------------------------------------------------------
