@@ -14,7 +14,7 @@ drop sequence category_id;
 drop sequence product_id;
 drop sequence order_detail_id;
 drop sequence img_seq;
-
+drop sequence supplier_id;
 
 select * from tab;
 
@@ -40,7 +40,7 @@ ssn VARCHAR2(15) NOT NULL,
 photo varchar2(30) default '1000');
 
 CREATE SEQUENCE employee_id
-START WITH 1000
+START WITH 2000
 INCREMENT BY 1;
 
 CREATE TABLE Employees(
@@ -74,46 +74,47 @@ CONSTRAINT orders_fk_shippers FOREIGN KEY(shipper_id)
     REFERENCES Shippers(shipper_id)
 );
 
+CREATE SEQUENCE supplier_id
+START WITH 3000
+INCREMENT BY 1;
+
 CREATE TABLE Suppliers(
-supplier_id VARCHAR2(15) PRIMARY KEY,
-supplier_name VARCHAR2(15) NOT NULL,
-contact_name VARCHAR2(15) NOT NULL,
-address VARCHAR2(15) NOT NULL,
-city VARCHAR2(15) NOT NULL,
-postal_code VARCHAR2(15) NOT NULL,
-country VARCHAR2(15) NOT NULL,
-phone VARCHAR2(15) NOT NULL
+supplier_id NUMBER PRIMARY KEY,
+supplier_name VARCHAR2(50) NOT NULL,
+contact_name VARCHAR2(50) NOT NULL,
+address VARCHAR2(50) NOT NULL,
+city VARCHAR2(50) NOT NULL,
+postal_code VARCHAR2(50) NOT NULL,
+country VARCHAR2(50) NOT NULL,
+phone VARCHAR2(50) NOT NULL
 );
 
 CREATE SEQUENCE category_id
-START WITH 2000
+START WITH 4000
 INCREMENT BY 1;
-
 
 CREATE TABLE Categories(
 category_id NUMBER PRIMARY KEY,
 category_name VARCHAR2(15),
 description VARCHAR2(15)
 );
-CREATE SEQUENCE product_id
-START WITH 3000
-INCREMENT BY 1;
 
+CREATE SEQUENCE product_id
+START WITH 5000
+INCREMENT BY 1;
 
 CREATE TABLE Products(
 product_id NUMBER PRIMARY KEY,
-product_name VARCHAR2(15) NOT NULL,
-supplier_id VARCHAR2(15) NOT NULL,
-CONSTRAINT products_fk_Suppliers FOREIGN KEY(supplier_id)
-    REFERENCES Suppliers(supplier_id),
+product_name VARCHAR2(30) NOT NULL,
+supplier_id NUMBER NOT NULL,
+CONSTRAINT products_fk_Suppliers FOREIGN KEY(supplier_id) REFERENCES Suppliers(supplier_id),
 category_id NUMBER,
-CONSTRAINT products_fk_Categories FOREIGN KEY(category_id)
-    references Categories(category_id),
-unit VARCHAR2(15) NOT NULL,
+CONSTRAINT products_fk_Categories FOREIGN KEY(category_id) REFERENCES Categories(category_id),
+unit VARCHAR2(30) NOT NULL,
 price NUMBER DEFAULT 0
 );
 CREATE SEQUENCE order_detail_id
-START WITH 4000
+START WITH 6000
 INCREMENT BY 1;
 
 CREATE TABLE Oder_Details(
@@ -126,7 +127,20 @@ CONSTRAINT Oder_Details_fk_Products FOREIGN KEY(product_id)
     REFERENCES Products(product_id),
 quantity NUMBER DEFAULT 0
 );
-
+------------ 카테고리 만드는곳 -------------
+insert into Categories(CATEGORY_ID,CATEGORY_NAME,DESCRIPTION)
+values(CATEGORY_ID.NEXTVAL,'smartphone','핸드폰');
+insert into Categories(CATEGORY_ID,CATEGORY_NAME,DESCRIPTION)
+values(CATEGORY_ID.NEXTVAL,'desktop','컴퓨터');
+insert into Categories(CATEGORY_ID,CATEGORY_NAME,DESCRIPTION)
+values(CATEGORY_ID.NEXTVAL,'notebook','노트북');
+------------ 서플라이 만드는곳 -------------
+insert into Suppliers(SUPPLIER_ID,SUPPLIER_NAME,CONTACT_NAME,postal_code,ADDRESS,CITY,COUNTRY,PHONE)
+values(SUPPLIER_ID.NEXTVAL,'samsung','이창준','12345','삼성로 129 ','경기도 수원시 영통구','대한민국','010-5899-1374');
+------------ 프로덕트 만드는곳 -------------
+insert into Products(PRODUCT_ID,PRODUCT_NAME,SUPPLIER_ID,CATEGORY_ID,UNIT,PRICE)
+values(PRODUCT_ID.NEXTVAL,'samsung','3000','4000','1',1000000);
+------------이미지 디폴트 인설트한곳---------
 
 insert into image(IMG_SEQ,IMGNAME,IMGEXTENTION,OWNER)
 values(IMG_SEQ.NEXTVAL,'default_img','png','default');

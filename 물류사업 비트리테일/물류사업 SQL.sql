@@ -42,11 +42,8 @@ SELECT * FROM TAB;
 SELECT * FROM EMPLOYEES;
 SELECT * FROM CUSTOMERS;
 select * from image;
+select * from SUPPLIERS;
 
 delete from image where IMGEXTENTION like 'png';
 
-insert into customers(customer_id,customer_name,password,city,address,postal_code,ssn,phone)
-values('asa1374','이창준','1','경기도 파주시 파주읍','파주4리 497-16','10835','930605-1','010-5899-1374');
-insert into image(IMG_SEQ,IMGNAME,IMGEXTENTION,OWNER)
-values(IMG_SEQ.NEXTVAL,'default_img','png','default');
 
